@@ -1,11 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:markdoven/api/httpsever.dart';
 import 'package:markdoven/markdown/pagebuilder.dart';
 import 'package:markdoven/markdown/render.dart';
 
 final contentKey = GlobalKey();
-
+final containerKey = GlobalKey();
 void main() async {
+  initServer("127.0.0.1", 8089);
   runApp(const Application());
 }
 
@@ -16,7 +20,9 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'MarkDoven',
-        home: const ContentPage(),
+        home: ContentPage(
+          key: containerKey,
+        ),
         theme: ThemeData(fontFamily: "default", brightness: Brightness.light),
         darkTheme: ThemeData(
           fontFamily: "default",
@@ -29,16 +35,18 @@ class ContentPage extends StatefulWidget {
   const ContentPage({super.key});
 
   @override
-  State<ContentPage> createState() => _ContentPageState();
+  State<ContentPage> createState() => ContentPageState();
 }
 
-class _ContentPageState extends State<ContentPage> {
-  @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      renderWidget(contentKey);
+class ContentPageState extends State<ContentPage> {
+  String content = "# Markdown\n---\nHello, Here is MarkDoven!";
+
+  Future<ByteData> renderText(String text) async {
+    setState(() {
+      content = text;
     });
+    sleep(const Duration(seconds: 3));
+    return await renderWidget(contentKey);
   }
 
   @override
@@ -46,10 +54,14 @@ class _ContentPageState extends State<ContentPage> {
     return SingleChildScrollView(
         child: RepaintBoundary(
       key: contentKey,
-      child: const MarkdownStringBuilder(
-        string: "# Markdown\n---\nHello, Here is MarkDoven!",
+      child: MarkdownStringBuilder(
+        string: content,
         ispage: false,
       ),
     ));
   }
+}
+
+ContentPageState getContentState() {
+  return containerKey.currentState as ContentPageState;
 }

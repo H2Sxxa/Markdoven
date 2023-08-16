@@ -44,7 +44,7 @@ class MarkdownStringBuilder extends StatelessWidget {
       return Markdown(data: string, styleSheet: getTheme(context));
     } else {
       return Container(
-        decoration: const BoxDecoration(color: Colors.white),
+        decoration: const BoxDecoration(color: Colors.grey),
         child: MarkdownBody(data: string, styleSheet: getTheme(context)),
       );
     }
