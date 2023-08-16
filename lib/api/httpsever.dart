@@ -2,6 +2,7 @@ import 'package:belatuk_http_server/belatuk_http_server.dart';
 import 'dart:io';
 
 import 'package:markdoven/main.dart';
+import 'package:markdoven/markdown/render.dart';
 
 void initServer(String ip, int port) async {
   var server = await HttpServer.bind(ip, port);
@@ -20,14 +21,22 @@ void initServer(String ip, int port) async {
   });
 }
 
-Future<void> handleGet(HttpRequest event) async {}
+Future<void> handleGet(HttpRequest event) async {
+  switch (event.uri.toString()) {
+    case "/api/screenshot":
+      event.response.add((await renderWidget(contentKey)).buffer.asUint8List());
+      await event.response.flush();
+      await event.response.close();
+    default:
+      break;
+  }
+}
 
 void handlePost(HttpRequest event, dynamic body) async {
   switch (event.uri.toString()) {
     case "/api/generate":
       String text = getValueElse(body, "text", "# No 'text' argument");
-      event.response
-          .add((await getContentState().renderText(text)).buffer.asUint8List());
+      getContentState().renderText(text);
       await event.response.flush();
       await event.response.close();
       break;

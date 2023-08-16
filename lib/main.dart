@@ -1,10 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:markdoven/api/httpsever.dart';
 import 'package:markdoven/markdown/pagebuilder.dart';
-import 'package:markdoven/markdown/render.dart';
 
 final contentKey = GlobalKey();
 final containerKey = GlobalKey();
@@ -40,13 +36,10 @@ class ContentPage extends StatefulWidget {
 
 class ContentPageState extends State<ContentPage> {
   String content = "# Markdown\n---\nHello, Here is MarkDoven!";
-
-  Future<ByteData> renderText(String text) async {
+  void renderText(String text) {
     setState(() {
       content = text;
     });
-    sleep(const Duration(seconds: 3));
-    return await renderWidget(contentKey);
   }
 
   @override
