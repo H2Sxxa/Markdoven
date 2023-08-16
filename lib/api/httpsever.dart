@@ -36,7 +36,8 @@ void handlePost(HttpRequest event, dynamic body) async {
   switch (event.uri.toString()) {
     case "/api/generate":
       String text = getValueElse(body, "text", "# No 'text' argument");
-      getContentState().renderText(text);
+      bool isdark = getValueElse(body, "isdark", false);
+      getContentState().renderText(text, isdark: isdark);
       await event.response.flush();
       await event.response.close();
       break;

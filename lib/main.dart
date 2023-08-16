@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:markdoven/api/httpsever.dart';
+import 'package:markdoven/config/init.dart';
 import 'package:markdoven/markdown/pagebuilder.dart';
 
 final contentKey = GlobalKey();
 final containerKey = GlobalKey();
 void main() async {
-  initServer("127.0.0.1", 8089);
+  initConfig();
+  initServer(readValue("host"), readValue("port"));
   runApp(const Application());
 }
 
@@ -19,10 +21,9 @@ class Application extends StatelessWidget {
         home: ContentPage(
           key: containerKey,
         ),
-        theme: ThemeData(fontFamily: "default", brightness: Brightness.light),
+        theme: ThemeData(fontFamily: "default"),
         darkTheme: ThemeData(
           fontFamily: "default",
-          brightness: Brightness.light,
         ));
   }
 }
@@ -36,9 +37,11 @@ class ContentPage extends StatefulWidget {
 
 class ContentPageState extends State<ContentPage> {
   String content = "# Markdown\n---\nHello, Here is MarkDoven!";
-  void renderText(String text) {
+  bool isdark = false;
+  void renderText(String text, {bool isdark = false}) {
     setState(() {
       content = text;
+      this.isdark = isdark;
     });
   }
 
@@ -50,6 +53,7 @@ class ContentPageState extends State<ContentPage> {
       child: MarkdownStringBuilder(
         string: content,
         ispage: false,
+        isdark: isdark,
       ),
     ));
   }

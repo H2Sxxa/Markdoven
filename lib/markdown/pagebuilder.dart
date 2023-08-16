@@ -1,31 +1,25 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-
-class MarkdownFileBuilder extends StatelessWidget {
-  final String path;
-  final bool ispage;
-  const MarkdownFileBuilder(
-      {required this.path, required this.ispage, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MarkdownStringBuilder(
-        string: File(path).readAsStringSync(), ispage: ispage);
-  }
-}
+import 'package:markdoven/markdown/atomcolor.dart';
 
 class MarkdownStringBuilder extends StatelessWidget {
   final String string;
+  final bool isdark;
   final bool ispage;
   const MarkdownStringBuilder(
-      {required this.string, required this.ispage, super.key});
+      {required this.string,
+      required this.ispage,
+      this.isdark = false,
+      super.key});
 
   MarkdownStyleSheet getTheme(BuildContext context) {
-    TextStyle commonstyle = const TextStyle(fontFamily: "default");
+    Decoration blockDecoration = BoxDecoration(
+        color: getContrastThemeColor(isdark: isdark),
+        borderRadius: BorderRadius.circular((8)));
+    TextStyle commonstyle = TextStyle(
+        fontFamily: "default", color: getContrastThemeColor(isdark: isdark));
     return MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-      textScaleFactor: 3,
+      textScaleFactor: 2,
       h1: commonstyle,
       h2: commonstyle,
       h3: commonstyle,
@@ -34,7 +28,12 @@ class MarkdownStringBuilder extends StatelessWidget {
       h6: commonstyle,
       a: commonstyle,
       p: commonstyle,
-      code: commonstyle.copyWith(fontStyle: FontStyle.italic),
+      horizontalRuleDecoration: blockDecoration,
+      blockquoteDecoration: blockDecoration,
+      codeblockDecoration: blockDecoration,
+      code: commonstyle.copyWith(
+          color: getThemeColor(isdark: isdark),
+          backgroundColor: getContrastThemeColor(isdark: isdark)),
     );
   }
 
@@ -44,7 +43,7 @@ class MarkdownStringBuilder extends StatelessWidget {
       return Markdown(data: string, styleSheet: getTheme(context));
     } else {
       return Container(
-        decoration: const BoxDecoration(color: Colors.grey),
+        decoration: BoxDecoration(color: getThemeColor(isdark: isdark)),
         child: MarkdownBody(data: string, styleSheet: getTheme(context)),
       );
     }
