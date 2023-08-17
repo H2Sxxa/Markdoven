@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:markdoven/api/httpsever.dart';
 import 'package:markdoven/config/init.dart';
@@ -9,6 +12,12 @@ void main() async {
   initConfig();
   initServer(readValue("host"), readValue("port"));
   runApp(const Application());
+  doWhenWindowReady(() {
+    final win = appWindow;
+    const resize = Size(500, 500);
+    win.size = resize;
+    win.show();
+  });
 }
 
 class Application extends StatelessWidget {
@@ -36,12 +45,14 @@ class ContentPage extends StatefulWidget {
 }
 
 class ContentPageState extends State<ContentPage> {
-  String content = "# Markdown\n---\nHello, Here is MarkDoven!";
+  String content = File("README.md").readAsStringSync();
   bool isdark = false;
-  void renderText(String text, {bool isdark = false}) {
+  double textScale = 1;
+  void renderText(String text, {bool isdark = false, double textScale = 1}) {
     setState(() {
       content = text;
       this.isdark = isdark;
+      this.textScale = textScale;
     });
   }
 
@@ -52,8 +63,8 @@ class ContentPageState extends State<ContentPage> {
       key: contentKey,
       child: MarkdownStringBuilder(
         string: content,
-        ispage: false,
         isdark: isdark,
+        textScale: textScale,
       ),
     ));
   }

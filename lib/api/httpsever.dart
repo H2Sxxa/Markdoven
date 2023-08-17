@@ -1,4 +1,6 @@
 import 'package:belatuk_http_server/belatuk_http_server.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:markdoven/main.dart';
@@ -37,7 +39,17 @@ void handlePost(HttpRequest event, dynamic body) async {
     case "/api/generate":
       String text = getValueElse(body, "text", "# No 'text' argument");
       bool isdark = getValueElse(body, "isdark", false);
-      getContentState().renderText(text, isdark: isdark);
+      double width = getValueElse(body, "width", 500).toDouble();
+      double scale = getValueElse(body, "scale", 1).toDouble();
+
+      doWhenWindowReady(() {
+        final win = appWindow;
+        final resize = Size(width, 500);
+        win.size = resize;
+        win.show();
+      });
+
+      getContentState().renderText(text, isdark: isdark, textScale: scale);
       await event.response.flush();
       await event.response.close();
       break;

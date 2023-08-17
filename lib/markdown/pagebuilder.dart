@@ -5,11 +5,11 @@ import 'package:markdoven/markdown/atomcolor.dart';
 class MarkdownStringBuilder extends StatelessWidget {
   final String string;
   final bool isdark;
-  final bool ispage;
+  final double textScale;
   const MarkdownStringBuilder(
       {required this.string,
-      required this.ispage,
       this.isdark = false,
+      this.textScale = 1,
       super.key});
 
   MarkdownStyleSheet getTheme(BuildContext context) {
@@ -19,7 +19,7 @@ class MarkdownStringBuilder extends StatelessWidget {
     TextStyle commonstyle = TextStyle(
         fontFamily: "default", color: getContrastThemeColor(isdark: isdark));
     return MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-      textScaleFactor: 2,
+      textScaleFactor: textScale,
       h1: commonstyle,
       h2: commonstyle,
       h3: commonstyle,
@@ -28,7 +28,10 @@ class MarkdownStringBuilder extends StatelessWidget {
       h6: commonstyle,
       a: commonstyle,
       p: commonstyle,
-      horizontalRuleDecoration: blockDecoration,
+      horizontalRuleDecoration: BoxDecoration(
+          border: Border.all(
+              color: getContrastThemeColor(isdark: isdark).withOpacity(0.5))),
+      tableCellsDecoration: blockDecoration,
       blockquoteDecoration: blockDecoration,
       codeblockDecoration: blockDecoration,
       code: commonstyle.copyWith(
@@ -39,13 +42,12 @@ class MarkdownStringBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ispage) {
-      return Markdown(data: string, styleSheet: getTheme(context));
-    } else {
-      return Container(
-        decoration: BoxDecoration(color: getThemeColor(isdark: isdark)),
-        child: MarkdownBody(data: string, styleSheet: getTheme(context)),
-      );
-    }
+    return Container(
+      decoration: BoxDecoration(color: getThemeColor(isdark: isdark)),
+      child: MarkdownBody(
+        data: string,
+        styleSheet: getTheme(context),
+      ),
+    );
   }
 }

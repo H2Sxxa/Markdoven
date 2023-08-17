@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_markdown: ^0.6.17+1
   belatuk_http_server: ^4.1.2
+  bitsdojo_window: ^0.1.5
   
 dev_dependencies:
   flutter_test:

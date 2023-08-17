@@ -11,6 +11,6 @@ with open(
 
 
 with open("cache.png", mode="wb") as f:
-    requests.post("http://127.0.0.1:8089/api/generate", json={"text": text,"isdark":True})
+    requests.post("http://127.0.0.1:9098/api/generate", json={"text": text,"isdark":True,"width":700,"scale":2})
     sleep(0.2)
-    f.write(requests.get("http://127.0.0.1:8089/api/screenshot").content)
+    f.write(requests.get("http://127.0.0.1:9098/api/screenshot").content)
